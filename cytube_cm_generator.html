@@ -10,6 +10,7 @@
 			let source = {url: "", contentType: "video/mp4", quality: 0};
 			source.url = file;
 			source.quality = quality;
+			source.contentType = file.endsWith(".webm") ? "video/webm" : "video/mp4";
 			return source;
           }
 		  
@@ -19,6 +20,16 @@
 			sources.push(getSource(folder + "/" + title + "-720-" + episodeNumber + ".mp4", 720));
 			return sources;
 		  }
+          
+          function getVtt(title, folder, episodeNumber) {
+              if (document.querySelector("#vtt").checked) {
+                  let vtt = {url: "", contentType: "text/vtt", name: "English subtitles", default: true};
+                  vtt.url = folder + "/" + title + "-" + episodeNumber + ".vtt";
+                  return vtt;
+              } else {
+                  return null;
+              }
+          }
           
           function updateCmData() {
 			document.querySelector("#generate").setAttribute("data-loading", "true");
@@ -36,6 +47,11 @@
 				//update data
 				cmData.title = title + " - Episode " + episodeNumber;
 				cmData.sources = getSources(fileName, folder, episodeNumber);
+
+                if (getVtt(fileName, folder, episodeNumber)) {
+                    cmData.textTracks = [];
+                    cmData.textTracks.push(getVtt(fileName, folder, episodeNumber));
+                }
 				
 				cmDataList.push(cmData);
 			}
@@ -84,7 +100,9 @@
               "label1 field1 field1 field1"
               "label2 field2 field2 field2"
 			  "label3 field3 field3 field3"
-              "button1 button1 button1 button1";
+			  "label4 field4 null null"
+              "button1 button1 button1 button1"
+              "desc desc desc desc";
           row-gap: 0.5em;
           column-gap: 0.5em;
       }
@@ -116,6 +134,8 @@
     <input type="url" name="folder" id="folder" style="grid-area: field2" value="https://ac-test10202.b-cdn.net/Toji%20no%20Miko/">
 	<label for="episodeCount" style="grid-area: label3">Episode count:</label>
 	<input type="number" id="episodeCount" name="episodeCount" style="grid-area: field3" value="24">
+	<label for="vtt" style="grid-area: label4">VTT subs?:</label>
+	<input type="checkbox" id="vtt" name="vtt" style="grid-area: field4">
     <div style="grid-area: button1; text-align: center;"><a id="generate" class="fakebutton">Generate</a></div>
-  
+    <p style="grid-area: desc">※ Looks for <span style="font-family: monospace;">folder/title-epnum.webm</span> for 1080p versions, <span style="font-family: monospace;">folder/title-epnum-720.mp4</span> for 720p versions, and <span style="font-family: monospace;">folder/title-epnum.vtt</span> for subtitles if selected. <span style="font-family: monospace;">epnum</span> starts with 0 if it's a number below 10.</p>
 </body></html>
