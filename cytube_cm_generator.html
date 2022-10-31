@@ -1,143 +1,121 @@
 <!DOCTYPE html>
 <html><head>
-<meta http-equiv="content-type" content="text/html; charset=windows-1252"><meta name="viewport" content="width=device-width"><title>https://apothes.is/hosted/cytube_cm_generator.html</title><link rel="stylesheet" type="text/css" href="resource://content-accessible/viewsource.css"></head><body id="viewsource" class="wrap highlight" style="-moz-tab-size: 4"><pre id="line1"><span></span><span class="doctype">&lt;!DOCTYPE html&gt;</span><span>
-<span id="line2"></span></span><span>&lt;<span class="start-tag">html</span>&gt;</span><span>
-<span id="line3"></span>  </span><span>&lt;<span class="start-tag">head</span>&gt;</span><span>
-<span id="line4"></span>    </span><span>&lt;<span class="start-tag">title</span>&gt;</span><span>Cytube Custom Media Generator</span><span>&lt;/<span class="end-tag">title</span>&gt;</span><span>
-<span id="line5"></span>    </span><span>&lt;<span class="start-tag">meta</span> <span class="attribute-name">charset</span>="<a class="attribute-value">utf-8</a>" <span>/</span>&gt;</span><span>
-<span id="line6"></span>    </span><span>&lt;<span class="start-tag">script</span>&gt;</span><span>
-<span id="line7"></span>      let cmData = {title: "", duration: 0, sources: []};
-<span id="line8"></span>      let cmDataUrl = null;
-<span id="line9"></span>      document.addEventListener("DOMContentLoaded", function() {
-<span id="line10"></span>          function getSource(num) {
-<span id="line11"></span>              if (document.querySelector("#file" + num).value.length &gt; 0) {
-<span id="line12"></span>                  let source = {url: "", contentType: "video/mp4", quality: 0};
-<span id="line13"></span>                  source.url = document.querySelector("#file" + num).value;
-<span id="line14"></span>                  source.quality = parseInt(document.querySelector("#res" + num).value);
-<span id="line15"></span>                  return source;
-<span id="line16"></span>              } else {
-<span id="line17"></span>                  return null;
-<span id="line18"></span>              }
-<span id="line19"></span>          }
-<span id="line20"></span>          
-<span id="line21"></span>          function updateCmData() {
-<span id="line22"></span>              document.querySelector("#generate").setAttribute("data-loading", "true");
-<span id="line23"></span>              //update data
-<span id="line24"></span>              cmData.title = document.querySelector("#title").value;
-<span id="line25"></span>              cmData.sources = [];
-<span id="line26"></span>              if (getSource(1)) {
-<span id="line27"></span>                  cmData.sources.push(getSource(1));
-<span id="line28"></span>              }
-<span id="line29"></span>              if (getSource(2)) {
-<span id="line30"></span>                  cmData.sources.push(getSource(2));
-<span id="line31"></span>              }
-<span id="line32"></span>
-<span id="line33"></span>              if (cmData.sources.length &gt; 0) {
-<span id="line34"></span>                  var vid = document.createElement("video");
-<span id="line35"></span>                  vid.src = cmData.sources[0].url;
-<span id="line36"></span>                  var loadedMetadataListener = vid.addEventListener("loadedmetadata", function() {
-<span id="line37"></span>                      cmData.duration = vid.duration;
-<span id="line38"></span>                      document.querySelector("#generate").removeAttribute("data-loading");
-<span id="line39"></span>                      document.querySelector("#download").removeAttribute("disabled");
-<span id="line40"></span>                      
-<span id="line41"></span>                      //create json blob url
-<span id="line42"></span>                      let blobbifiedCmData = new Blob([JSON.stringify(cmData)], { type: 'application/json' });
-<span id="line43"></span>                      if (cmDataUrl) {
-<span id="line44"></span>                          URL.revokeObjectURL(cmDataUrl);
-<span id="line45"></span>                          cmDataUrl = null;
-<span id="line46"></span>                      }
-<span id="line47"></span>                      cmDataUrl = URL.createObjectURL(blobbifiedCmData);
-<span id="line48"></span>                      
-<span id="line49"></span>                      let downloadButton = document.querySelector("#download");
-<span id="line50"></span>                      //sanitize for filename
-<span id="line51"></span>                      let cmFilename = cmData.title.replace(/[^a-zA-Z0-9]/g, '');
-<span id="line52"></span>                      cmFilename = cmFilename.length &gt; 0 ? cmFilename + '.json' : "cytube-cm.json";
-<span id="line53"></span>                      downloadButton.setAttribute("download", cmFilename);
-<span id="line54"></span>                      downloadButton.setAttribute("href", cmDataUrl);
-<span id="line55"></span>
-<span id="line56"></span>                      //remove listener so that video element dies
-<span id="line57"></span>                      vid.removeEventListener("loadedmetadata", loadedMetadataListener);
-<span id="line58"></span>                  });
-<span id="line59"></span>              }
-<span id="line60"></span>          }
-<span id="line61"></span>
-<span id="line62"></span>          function disableDownload() {
-<span id="line63"></span>              document.querySelector("#download").setAttribute("disabled", "disabled");
-<span id="line64"></span>          }
-<span id="line65"></span>          
-<span id="line66"></span>          document.querySelector("#generate").addEventListener("click", updateCmData);
-<span id="line67"></span>          document.querySelector("#file1").addEventListener("input", disableDownload);
-<span id="line68"></span>          document.querySelector("#file2").addEventListener("input", disableDownload);
-<span id="line69"></span>          document.querySelector("#res1").addEventListener("change", disableDownload);
-<span id="line70"></span>          document.querySelector("#res2").addEventListener("change", disableDownload);
-<span id="line71"></span>          disableDownload();
-<span id="line72"></span>      });
-<span id="line73"></span>    </span><span>&lt;/<span class="end-tag">script</span>&gt;</span><span>
-<span id="line74"></span>    </span><span>&lt;<span class="start-tag">style</span>&gt;</span><span>
-<span id="line75"></span>      body {
-<span id="line76"></span>          margin-left: auto;
-<span id="line77"></span>          margin-right: auto;
-<span id="line78"></span>          max-width: 33em;
-<span id="line79"></span>          display: grid;
-<span id="line80"></span>          grid-template-areas:
-<span id="line81"></span>              "label1 field1 field1 field1"
-<span id="line82"></span>              "label2 field2 label3 field3"
-<span id="line83"></span>              "label4 field4 label5 field5"
-<span id="line84"></span>              "button1 button1 button2 button2";
-<span id="line85"></span>          row-gap: 0.5em;
-<span id="line86"></span>          column-gap: 0.5em;
-<span id="line87"></span>      }
-<span id="line88"></span>      .fakebutton {
-<span id="line89"></span>          border: 1px solid black;
-<span id="line90"></span>          padding: 2px;
-<span id="line91"></span>          background-color: lightgrey;
-<span id="line92"></span>          color: black;
-<span id="line93"></span>          text-decoration: none;
-<span id="line94"></span>          text-align: center;
-<span id="line95"></span>          cursor: pointer;
-<span id="line96"></span>      }
-<span id="line97"></span>      .fakebutton[data-loading=true] {
-<span id="line98"></span>          color: grey;
-<span id="line99"></span>          cursor: wait;
-<span id="line100"></span>          pointer-events: none;
-<span id="line101"></span>      }
-<span id="line102"></span>      .fakebutton[disabled=disabled] {
-<span id="line103"></span>          color: grey;
-<span id="line104"></span>          cursor: not-allowed;
-<span id="line105"></span>          pointer-events: none;
-<span id="line106"></span>      }
-<span id="line107"></span>    </span><span>&lt;/<span class="end-tag">style</span>&gt;</span><span>
-<span id="line108"></span>  </span><span>&lt;/<span class="end-tag">head</span>&gt;</span><span>
-<span id="line109"></span>  </span><span>&lt;<span class="start-tag">body</span>&gt;</span><span>
-<span id="line110"></span>    </span><span>&lt;<span class="start-tag">label</span> <span class="attribute-name">for</span>="<a class="attribute-value">title</a>" <span class="attribute-name">style</span>="<a class="attribute-value">grid-area: label1</a>"&gt;</span><span>Title in queue:</span><span>&lt;/<span class="end-tag">label</span>&gt;</span><span>
-<span id="line111"></span>    </span><span>&lt;<span class="start-tag">input</span> <span class="attribute-name">id</span>="<a class="attribute-value">title</a>" <span class="attribute-name">name</span>="<a class="attribute-value">title</a>" <span class="attribute-name">style</span>="<a class="attribute-value">grid-area: field1</a>" <span>/</span>&gt;</span><span>
-<span id="line112"></span>    </span><span>&lt;<span class="start-tag">label</span> <span class="attribute-name">for</span>="<a class="attribute-value">file1</a>" <span class="attribute-name">style</span>="<a class="attribute-value">grid-area: label2</a>"&gt;</span><span>URL of video:</span><span>&lt;/<span class="end-tag">label</span>&gt;</span><span>
-<span id="line113"></span>    </span><span>&lt;<span class="start-tag">input</span> <span class="attribute-name">type</span>="<a class="attribute-value">url</a>" <span class="attribute-name">name</span>="<a class="attribute-value">file1</a>" <span class="attribute-name">id</span>="<a class="attribute-value">file1</a>" <span class="attribute-name">style</span>="<a class="attribute-value">grid-area: field2</a>"<span>/</span>&gt;</span><span>
-<span id="line114"></span>    </span><span>&lt;<span class="start-tag">label</span> <span class="attribute-name">for</span>="<a class="attribute-value">res1</a>" <span class="attribute-name">style</span>="<a class="attribute-value">grid-area: label3</a>"&gt;</span><span>Resolution of video:</span><span>&lt;/<span class="end-tag">label</span>&gt;</span><span>
-<span id="line115"></span>    </span><span>&lt;<span class="start-tag">select</span> <span class="attribute-name">name</span>="<a class="attribute-value">res1</a>" <span class="attribute-name">id</span>="<a class="attribute-value">res1</a>" <span class="attribute-name">style</span>="<a class="attribute-value">grid-area: field3</a>"&gt;</span><span>
-<span id="line116"></span>      </span><span>&lt;<span class="start-tag">option</span>&gt;</span><span>240</span><span>&lt;/<span class="end-tag">option</span>&gt;</span><span>
-<span id="line117"></span>      </span><span>&lt;<span class="start-tag">option</span>&gt;</span><span>360</span><span>&lt;/<span class="end-tag">option</span>&gt;</span><span>
-<span id="line118"></span>      </span><span>&lt;<span class="start-tag">option</span>&gt;</span><span>480</span><span>&lt;/<span class="end-tag">option</span>&gt;</span><span>
-<span id="line119"></span>      </span><span>&lt;<span class="start-tag">option</span>&gt;</span><span>540</span><span>&lt;/<span class="end-tag">option</span>&gt;</span><span>
-<span id="line120"></span>      </span><span>&lt;<span class="start-tag">option</span>&gt;</span><span>720</span><span>&lt;/<span class="end-tag">option</span>&gt;</span><span>
-<span id="line121"></span>      </span><span>&lt;<span class="start-tag">option</span> <span class="attribute-name">selected</span>&gt;</span><span>1080</span><span>&lt;/<span class="end-tag">option</span>&gt;</span><span>
-<span id="line122"></span>      </span><span>&lt;<span class="start-tag">option</span>&gt;</span><span>1440</span><span>&lt;/<span class="end-tag">option</span>&gt;</span><span>
-<span id="line123"></span>      </span><span>&lt;<span class="start-tag">option</span>&gt;</span><span>2160</span><span>&lt;/<span class="end-tag">option</span>&gt;</span><span>
-<span id="line124"></span>    </span><span>&lt;/<span class="end-tag">select</span>&gt;</span><span>
-<span id="line125"></span>    </span><span>&lt;<span class="start-tag">label</span> <span class="attribute-name">for</span>="<a class="attribute-value">file2</a>" <span class="attribute-name">style</span>="<a class="attribute-value">grid-area: label4</a>"&gt;</span><span>URL of video:</span><span>&lt;/<span class="end-tag">label</span>&gt;</span><span>
-<span id="line126"></span>    </span><span>&lt;<span class="start-tag">input</span> <span class="attribute-name">type</span>="<a class="attribute-value">url</a>" <span class="attribute-name">name</span>="<a class="attribute-value">file2</a>" <span class="attribute-name">id</span>="<a class="attribute-value">file2</a>" <span class="attribute-name">style</span>="<a class="attribute-value">grid-area: field4</a>" <span>/</span>&gt;</span><span>
-<span id="line127"></span>    </span><span>&lt;<span class="start-tag">label</span> <span class="attribute-name">for</span>="<a class="attribute-value">res2</a>" <span class="attribute-name">style</span>="<a class="attribute-value">grid-area: label5</a>"&gt;</span><span>Resolution of video:</span><span>&lt;/<span class="end-tag">label</span>&gt;</span><span>
-<span id="line128"></span>    </span><span>&lt;<span class="start-tag">select</span> <span class="attribute-name">name</span>="<a class="attribute-value">res2</a>" <span class="attribute-name">id</span>="<a class="attribute-value">res2</a>" <span class="attribute-name">style</span>="<a class="attribute-value">grid-area: field5</a>"&gt;</span><span>
-<span id="line129"></span>      </span><span>&lt;<span class="start-tag">option</span>&gt;</span><span>240</span><span>&lt;/<span class="end-tag">option</span>&gt;</span><span>
-<span id="line130"></span>      </span><span>&lt;<span class="start-tag">option</span>&gt;</span><span>360</span><span>&lt;/<span class="end-tag">option</span>&gt;</span><span>
-<span id="line131"></span>      </span><span>&lt;<span class="start-tag">option</span>&gt;</span><span>480</span><span>&lt;/<span class="end-tag">option</span>&gt;</span><span>
-<span id="line132"></span>      </span><span>&lt;<span class="start-tag">option</span>&gt;</span><span>540</span><span>&lt;/<span class="end-tag">option</span>&gt;</span><span>
-<span id="line133"></span>      </span><span>&lt;<span class="start-tag">option</span> <span class="attribute-name">selected</span>&gt;</span><span>720</span><span>&lt;/<span class="end-tag">option</span>&gt;</span><span>
-<span id="line134"></span>      </span><span>&lt;<span class="start-tag">option</span>&gt;</span><span>1080</span><span>&lt;/<span class="end-tag">option</span>&gt;</span><span>
-<span id="line135"></span>      </span><span>&lt;<span class="start-tag">option</span>&gt;</span><span>1440</span><span>&lt;/<span class="end-tag">option</span>&gt;</span><span>
-<span id="line136"></span>      </span><span>&lt;<span class="start-tag">option</span>&gt;</span><span>2160</span><span>&lt;/<span class="end-tag">option</span>&gt;</span><span>
-<span id="line137"></span>    </span><span>&lt;/<span class="end-tag">select</span>&gt;</span><span>
-<span id="line138"></span>    </span><span>&lt;<span class="start-tag">div</span> <span class="attribute-name">style</span>="<a class="attribute-value">grid-area: button1; text-align: center;</a>"&gt;</span><span></span><span>&lt;<span class="start-tag">a</span> <span class="attribute-name">id</span>="<a class="attribute-value">generate</a>" <span class="attribute-name">class</span>="<a class="attribute-value">fakebutton</a>"&gt;</span><span>Generate</span><span>&lt;/<span class="end-tag">a</span>&gt;</span><span></span><span>&lt;/<span class="end-tag">div</span>&gt;</span><span></span><span>&lt;<span class="start-tag">div</span> <span class="attribute-name">style</span>="<a class="attribute-value">grid-area: button2; text-align: center;</a>"&gt;</span><span></span><span>&lt;<span class="start-tag">a</span> <span class="attribute-name">id</span>="<a class="attribute-value">download</a>" <span class="attribute-name">class</span>="<a class="attribute-value">fakebutton</a>"&gt;</span><span>Download</span><span>&lt;/<span class="end-tag">a</span>&gt;</span><span></span><span>&lt;/<span class="end-tag">div</span>&gt;</span><span>
-<span id="line139"></span>  </span><span>&lt;/<span class="end-tag">body</span>&gt;</span><span>
-<span id="line140"></span></span><span>&lt;/<span class="end-tag">html</span>&gt;</span><span>
-<span id="line141"></span></span></pre></body></html>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Cytube Custom Media Generator</title>
+    <meta charset="utf-8">
+    <script>
+	  let cmDataList = [];
+      document.addEventListener("DOMContentLoaded", function() {
+          function getSource(file, quality) {
+			let source = {url: "", contentType: "video/mp4", quality: 0};
+			source.url = file;
+			source.quality = quality;
+			return source;
+          }
+		  
+		  function getSources(title, folder, episodeNumber) {
+			let sources = [];
+			sources.push(getSource(folder + "/" + title + "-" + episodeNumber + ".webm", 1080));
+			sources.push(getSource(folder + "/" + title + "-720-" + episodeNumber + ".mp4", 720));
+			return sources;
+		  }
+          
+          function updateCmData() {
+			document.querySelector("#generate").setAttribute("data-loading", "true");
+			
+			//generate file data
+			let title = document.querySelector("#title").value;
+			let folder = document.querySelector("#folder").value.replace(/\/$/, "");
+			let episodeCount = document.querySelector("#episodeCount").value;
+			let fileName = title.toLowerCase().replaceAll(' ', '-');
+			
+			for (let i = 0; i < episodeCount; i++) {
+				let cmData = {title: "", duration: 0, sources: []};
+				let episodeNumber = String(i + 1).padStart(2, '0');
+				
+				//update data
+				cmData.title = title + " - Episode " + episodeNumber;
+				cmData.sources = getSources(fileName, folder, episodeNumber);
+				
+				cmDataList.push(cmData);
+			}
+			
+			generateFiles();
+          }
+		  
+		  function generateFiles() {
+			cmDataList.forEach(function(cmData) {
+				var vid = document.createElement("video");
+				vid.src = cmData.sources[0].url;
+				var loadedMetadataListener = vid.addEventListener("loadedmetadata", function() {
+					cmData.duration = vid.duration;
+					
+					//create json blob url
+					let blobbifiedCmData = new Blob([JSON.stringify(cmData)], { type: 'application/json' });
+					let cmDataUrl = URL.createObjectURL(blobbifiedCmData);
+					let cmFilename = cmData.title.replace(/[^a-zA-Z0-9]/g, '');
+					cmFilename = cmFilename.length > 0 ? cmFilename + '.json' : "cytube-cm.json";
+					
+					let temporaryDownloadLink = document.createElement("a");
+					temporaryDownloadLink.style.display = 'none';
+					
+					document.body.appendChild(temporaryDownloadLink);
+					
+					temporaryDownloadLink.setAttribute('href', cmDataUrl);
+					temporaryDownloadLink.setAttribute('download', cmFilename);
+					temporaryDownloadLink.click();
+					
+					document.body.removeChild(temporaryDownloadLink);
+					vid.removeEventListener("loadedmetadata", loadedMetadataListener);
+				});
+			});
+		  }
+          
+          document.querySelector("#generate").addEventListener("click", updateCmData);
+      });
+    </script>
+    <style>
+      body {
+          margin-left: auto;
+          margin-right: auto;
+          max-width: 33em;
+          display: grid;
+          grid-template-areas:
+              "label1 field1 field1 field1"
+              "label2 field2 field2 field2"
+			  "label3 field3 field3 field3"
+              "button1 button1 button1 button1";
+          row-gap: 0.5em;
+          column-gap: 0.5em;
+      }
+      .fakebutton {
+          border: 1px solid black;
+          padding: 2px;
+          background-color: lightgrey;
+          color: black;
+          text-decoration: none;
+          text-align: center;
+          cursor: pointer;
+      }
+      .fakebutton[data-loading=true] {
+          color: grey;
+          cursor: wait;
+          pointer-events: none;
+      }
+      .fakebutton[disabled=disabled] {
+          color: grey;
+          cursor: not-allowed;
+          pointer-events: none;
+      }
+    </style>
+  </head>
+  <body>
+    <label for="title" style="grid-area: label1">Title in queue:</label>
+    <input id="title" name="title" style="grid-area: field1" value="Toji no Miko">
+    <label for="folder" style="grid-area: label2">URL of video folder:</label>
+    <input type="url" name="folder" id="folder" style="grid-area: field2" value="https://ac-test10202.b-cdn.net/Toji%20no%20Miko/">
+	<label for="episodeCount" style="grid-area: label3">Episode count:</label>
+	<input type="number" id="episodeCount" name="episodeCount" style="grid-area: field3" value="24">
+    <div style="grid-area: button1; text-align: center;"><a id="generate" class="fakebutton">Generate</a></div>
+  
+</body></html>
