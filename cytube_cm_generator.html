@@ -17,7 +17,7 @@
 		  function getSources(title, folder, episodeNumber) {
 			let sources = [];
 			sources.push(getSource(folder + "/" + title + "-" + episodeNumber + ".webm", 1080));
-			sources.push(getSource(folder + "/" + title + "-720-" + episodeNumber + ".mp4", 720));
+			sources.push(getSource(folder + "/" + title + "-" + episodeNumber + ".mp4", 720));
 			return sources;
 		  }
           
@@ -137,5 +137,5 @@
 	<label for="vtt" style="grid-area: label4">VTT subs?:</label>
 	<input type="checkbox" id="vtt" name="vtt" style="grid-area: field4">
     <div style="grid-area: button1; text-align: center;"><a id="generate" class="fakebutton">Generate</a></div>
-    <p style="grid-area: desc">※ Looks for <span style="font-family: monospace;">folder/title-epnum.webm</span> for 1080p versions, <span style="font-family: monospace;">folder/title-720-epnum.mp4</span> for 720p versions, and <span style="font-family: monospace;">folder/title-epnum.vtt</span> for subtitles if selected. <span style="font-family: monospace;">epnum</span> starts with 0 if it's a number below 10.</p>
+    <p style="grid-area: desc">※ Looks for <span style="font-family: monospace;">folder/title-epnum.webm</span> for 1080p versions, <span style="font-family: monospace;">folder/title-epnum.mp4</span> for 720p versions, and <span style="font-family: monospace;">folder/title-epnum.vtt</span> for subtitles if selected. <span style="font-family: monospace;">epnum</span> starts with 0 if it's a number below 10.</p>
 </body></html>
